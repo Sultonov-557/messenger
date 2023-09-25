@@ -1,4 +1,4 @@
-const socket = new WebSocket("ws://localhost:2668");
+const socket = new WebSocket("ws://" + document.domain + ":2668");
 
 const message = document.querySelector("span");
 const text = document.querySelector("input");
