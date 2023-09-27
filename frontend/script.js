@@ -1,16 +1,31 @@
-const socket = new WebSocket("ws://" + document.domain + ":2668");
+if (document.cookie) {
+	const name = document.cookie;
+	const socket = new WebSocket("ws://" + document.domain + ":2668");
 
-const message = document.querySelector("span");
-const text = document.querySelector("input");
-const send = document.querySelector("button");
+	const messages = document.querySelector(".messenger-messages");
+	const text = document.querySelector("input");
 
-send.addEventListener("click", () => {
-	if (text.value != "") {
-		socket.send(text.value);
-		text.value = "";
+	function send() {
+		if (text.value != "") {
+			socket.send(JSON.stringify({ name, message: text.value }));
+			text.value = "";
+		}
 	}
-});
 
-socket.addEventListener("message", (ws) => {
-	message.innerText += ws.data + "\n";
-});
+	socket.addEventListener("message", (ws) => {
+		const data = JSON.parse(ws.data);
+		const message = document.createElement("div");
+		const sender = document.createElement("div");
+		sender.className = "sender";
+		sender.innerText = data.name;
+		const text = document.createElement("div");
+		text.className = "message-text";
+		text.innerText = data.message;
+		message.appendChild(sender);
+		message.appendChild(text);
+		message.className = "messenger-message";
+		messages.appendChild(message);
+	});
+} else {
+	window.open("/login", "_self");
+}
