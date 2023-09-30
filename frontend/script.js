@@ -1,5 +1,6 @@
 if (document.cookie) {
-	const name = document.cookie;
+	const token = document.cookie.split("=")[1];
+
 	const socket = new WebSocket("ws://" + document.domain + ":2668");
 
 	const messages = document.querySelector(".messenger-messages");
@@ -7,7 +8,7 @@ if (document.cookie) {
 
 	function send() {
 		if (text.value != "") {
-			socket.send(JSON.stringify({ name, message: text.value }));
+			socket.send(JSON.stringify({ message: text.value }));
 			text.value = "";
 		}
 	}
@@ -27,5 +28,5 @@ if (document.cookie) {
 		messages.appendChild(message);
 	});
 } else {
-	window.open("/login", "_self");
+	window.open("/auth", "_self");
 }
