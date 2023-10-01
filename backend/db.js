@@ -18,4 +18,14 @@ async function query(queryString, options) {
 	return res[0][0];
 }
 
-module.exports = { start, query };
+async function queryAll(queryString, options) {
+	let res;
+	if (options) {
+		res = await db.query(queryString, options);
+	} else {
+		res = await db.query(queryString);
+	}
+	return res[0];
+}
+
+module.exports = { start, query, queryAll };

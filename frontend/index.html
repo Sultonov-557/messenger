@@ -2,6 +2,8 @@
 <html>
 	<head>
 		<style>
+			/* CSS styles */
+
 			body {
 				font-family: Arial, sans-serif;
 				background-color: #f2f2f2;
@@ -67,6 +69,24 @@
 			.messenger-input button:hover {
 				background-color: #45a049;
 			}
+
+			.logout-button {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			.logout-button button {
+				padding: 10px;
+				background-color: #f44336;
+				color: #fff;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+
+			.logout-button button:hover {
+				background-color: #d32f2f;
+			}
 		</style>
 	</head>
 	<body>
@@ -77,7 +97,10 @@
 			<div class="messenger-messages"></div>
 			<div class="messenger-input">
 				<input type="text" placeholder="Type your message" />
-				<button type="submit" onclick="send()">Send</button>
+				<button type="submit" id="send">Send</button>
+			</div>
+			<div class="logout-button">
+				<button onclick="logout()" id="logout">Logout</button>
 			</div>
 		</div>
 	</body>
