@@ -1,31 +1,28 @@
-const mysql = require("mysql2/promise");
+const mysql = require("mysql2/promise"); //importing mysql package that works with promise
 
 /**@type {mysql.Connection} */
-let db;
+let db; //setting global variable to store database connection
 
-async function start() {
+async function connect() {
+	//creating connection
 	db = await mysql.createConnection({ host: "127.0.0.1", port: 3300, database: "messenger", password: "root", user: "root" });
+	//connecting
 	db.connect();
 }
 
-async function query(queryString, options) {
-	let res;
-	if (options) {
-		res = await db.query(queryString, options);
-	} else {
-		res = await db.query(queryString);
-	}
-	return res[0][0];
+//this function gets response from database and destruct object from array
+async function query(queryString, queryOptions) {
+	const response = await db.query(queryString, queryOptions); //getting data from database
+
+	return response[0][0]; //destructing and returning it
 }
 
-async function queryAll(queryString, options) {
-	let res;
-	if (options) {
-		res = await db.query(queryString, options);
-	} else {
-		res = await db.query(queryString);
-	}
-	return res[0];
+//this function gets response from database and destruct objects from array
+async function queryAll(queryString, queryOptions) {
+	const response = await db.query(queryString, queryOptions);
+
+	return response[0];
 }
 
-module.exports = { start, query, queryAll };
+//exporting functions
+module.exports = { connect, query, queryAll };
