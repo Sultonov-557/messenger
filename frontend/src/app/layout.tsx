@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./chat.css";
+import "./auth/auth.css";
+import { CssBaseline } from "@mui/material";
 
 export const metadata: Metadata = {
 	title: "Create Next App",
@@ -13,7 +16,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body>{children}</body>
+			<CssBaseline />
+			<body>{children}</ body>
 		</html>
 	);
 }

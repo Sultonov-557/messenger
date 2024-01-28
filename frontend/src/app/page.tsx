@@ -1,12 +1,13 @@
 "use client";
+import { Button, TextField } from "@mui/material";
 import axios from "axios";
 
 export default async function Home() {
 	const messages: any = await axios.get("http://localhost:5000/api/message");
+	let text = "";
 	async function sendMessage() {
-		const input = document.querySelector("input");
 		await axios.post("http://localhost:5000/api/message", {
-			text: input?.value,
+			text,
 		});
 	}
 
@@ -22,8 +23,10 @@ export default async function Home() {
 					))}
 				</div>
 				<div>
-					<input id="input" type="text" placeholder="Type your message" />
-					<button onClick={sendMessage}>Send</button>
+					<TextField id="input" label="Message" variant="standard" onChange={(e) => (text = e.target.value)} />
+					<Button variant="outlined" onClick={sendMessage}>
+						Send
+					</Button>
 				</div>
 			</div>
 		</div>
