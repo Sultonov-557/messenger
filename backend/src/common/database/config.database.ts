@@ -2,6 +2,7 @@ import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOpti
 import { SnakeNamingStrategy } from './namingStrategy.database';
 import { env } from '../config';
 import { User } from 'src/modules/user/entities/user.entity';
+import { Message } from 'src/modules/message/entities/message.entity';
 
 export const mainDbConfig: MysqlConnectionOptions = {
   type: 'mysql',
@@ -11,7 +12,7 @@ export const mainDbConfig: MysqlConnectionOptions = {
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [User],
+  entities: [User, Message],
   synchronize: env.DB_SYNC,
   logger: 'advanced-console',
   logging: ['error'],

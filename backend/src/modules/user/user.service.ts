@@ -18,7 +18,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class UserService {
   constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) {}
 
-  async create(dto: CreateUserDto) {
+  async register(dto: CreateUserDto) {
     const busyUsername = await this.userRepo.findOneBy({ username: dto.username });
     if (busyUsername) HttpError({ code: 'BUSY_USERNAME' });
 

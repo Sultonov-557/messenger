@@ -34,10 +34,10 @@ export class UserController {
     return CoreApiResponse.success(await this.userService.logout(req.user.id));
   }
 
-  @Post()
+  @Post('register')
   @DecoratorWrapper('user yaratish', true, [Role.Admin])
-  async create(@Body() dto: CreateUserDto) {
-    return CoreApiResponse.success(await this.userService.create(dto));
+  async register(@Body() dto: CreateUserDto) {
+    return CoreApiResponse.success(await this.userService.register(dto));
   }
 
   @Get()

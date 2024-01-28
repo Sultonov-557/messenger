@@ -1,23 +1,29 @@
-import { useState } from "react";
+"use client";
+import axios from "axios";
 
 export default async function Home() {
-	const messages: { text: string; sender: string }[] = await (await fetch("https://localhost:5000/messages")).json();
+	const messages: any = await axios.get("http://localhost:5000/api/message");
+	async function sendMessage() {
+		const input = document.querySelector("input");
+		await axios.post("http://localhost:5000/api/message", {
+			text: input?.value,
+		});
+	}
 
-	function handleSendMessage() {}
 	return (
 		<div>
 			<div>
 				<h1>Welcome to My Chat App</h1>
 				<div style={{ border: "1px solid #ccc", padding: "10px", height: "300px", overflowY: "auto" }}>
-					{messages.map((message, index) => (
+					{messages.data.data.data.map((message: any, index: number) => (
 						<div key={index}>
 							{message.sender}: {message.text}
 						</div>
 					))}
 				</div>
 				<div>
-					<input type="text" placeholder="Type your message" />
-					<button onClick={handleSendMessage}>Send</button>
+					<input id="input" type="text" placeholder="Type your message" />
+					<button onClick={sendMessage}>Send</button>
 				</div>
 			</div>
 		</div>

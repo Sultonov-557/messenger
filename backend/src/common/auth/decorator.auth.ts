@@ -10,7 +10,7 @@ export function DecoratorWrapper(summary: string, authRequired = false, roles?: 
         ApiOperation({ summary: summary.split('-')[0], description: summary.split('-')[1] }),
         ApiBearerAuth('token'),
         ApiHeader({ name: 'Authorization', required: false }),
-        Roles(...roles),
+        Roles(...(roles || [])),
         UseGuards(AuthorizationGuard),
       )
     : applyDecorators(ApiOperation({ summary }));
