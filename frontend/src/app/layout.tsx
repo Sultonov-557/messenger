@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import "./chat.css";
-import "./auth/auth.css";
 import { CssBaseline } from "@mui/material";
 
 export const metadata: Metadata = {
@@ -16,8 +14,8 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<CssBaseline />
-			<body>{children}</ body>
+			{/* <CssBaseline /> */}
+			<body>{children}</body>
 		</html>
 	);
 }
