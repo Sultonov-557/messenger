@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { CssBaseline } from "@mui/material";
 
 export const metadata: Metadata = {
 	title: "Chat APP",

@@ -10,7 +10,12 @@ const config: Config = {
 				"2xl": "1360px",
 			},
 		},
-		extend: {},
+		extend: {
+			colors: {
+				background: "#18191d",
+				foreground: "#282e33",
+			},
+		},
 	},
 };
 export default config;
