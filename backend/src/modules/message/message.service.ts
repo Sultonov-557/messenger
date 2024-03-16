@@ -6,14 +6,30 @@ import { HttpError } from 'src/common/exception/http.error';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { GetMessageQueryDto } from './dto/get-message-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
+import { User } from '../user/entities/user.entity';
+import { WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
 
 @Injectable()
 export class MessageService {
-  constructor(@InjectRepository(Message) private readonly messageRepo: Repository<Message>) {}
+  constructor(
+    @InjectRepository(Message) private readonly messageRepo: Repository<Message>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+  ) {}
 
-  async create(dto: CreateMessageDto) {
-    const message = this.messageRepo.create(dto);
-    return await this.messageRepo.save(message);
+  async create(userID: number, dto: CreateMessageDto) {
+    const { text } = dto;
+    const sender = await this.userRepo.findOneBy({ id: userID });
+
+    if (!sender) return { success: false, error: 'USER_NOT_FOUND' };
+
+    const message = await this.messageRepo.create({ text, sender });
+
+    await this.messageRepo.save(message);
+    const { created_at, id, updated_at } = message;
+
+    return { success: true, data: { created_at, id, updated_at, sender_id: sender.id } };
   }
 
   async delete(id: number) {

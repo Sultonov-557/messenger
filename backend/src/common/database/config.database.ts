@@ -1,8 +1,8 @@
 import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { SnakeNamingStrategy } from './namingStrategy.database';
 import { env } from '../config';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Message } from 'src/modules/message/entities/message.entity';
+import { User } from '../../modules/user/entities/user.entity';
+import { Message } from '../../modules/message/entities/message.entity';
 
 export const mainDbConfig: MysqlConnectionOptions = {
   type: 'mysql',

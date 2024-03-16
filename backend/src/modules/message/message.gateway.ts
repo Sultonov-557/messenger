@@ -1,35 +1,27 @@
 import { WebSocketGateway, SubscribeMessage, MessageBody, WebSocketServer } from '@nestjs/websockets';
-import { NewMessageBody } from './body/newMessage.body';
 import { Server } from 'socket.io';
-import { Message } from './entities/message.entity';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DecoratorWrapper } from 'src/common/auth/decorator.auth';
+import { DecoratorWrapperWS } from 'src/common/auth/decorator.auth';
 import { Req } from '@nestjs/common';
 import { Request } from 'express';
-import { User } from '../user/entities/user.entity';
-import { HttpError } from 'src/common/exception/http.error';
+import { MessageService } from './message.service';
+import { CreateMessageDto } from './dto/create-message.dto';
+import { Role } from 'src/common/auth/roles/role.enum';
 
-@WebSocketGateway(5000)
+@WebSocketGateway()
 export class MessageGateway {
-  constructor(
-    @InjectRepository(Message) private messageRepo: Repository<Message>,
-    @InjectRepository(User) private userRepo: Repository<User>,
-  ) {}
+  constructor(private messageService: MessageService) {}
 
   @WebSocketServer()
   server: Server;
 
   @SubscribeMessage('new_message')
-  @DecoratorWrapper('newMessage', true)
-  async newMessage(@MessageBody() body: NewMessageBody, @Req() req: Request) {
-    const { text } = body;
-    const sender = await this.userRepo.findOneBy({ id: req.user.id });
-    if (!sender) HttpError({ code: 'USER_NOT_FOUND' });
-
-    const message = await this.messageRepo.create({ text, sender });
-
-    this.messageRepo.save(message);
-    this.server.emit('new_message', message);
+  @DecoratorWrapperWS('newMessage', true, [Role.User])
+  async newMessage(@MessageBody() body: CreateMessageDto, @Req() req: Request) {
+    const message = await this.messageService.create(req.user.id, body);
+    if (message.success) {
+      this.server.emit('new_message', message.data);
+    } else {
+      return message;
+    }
   }
 }

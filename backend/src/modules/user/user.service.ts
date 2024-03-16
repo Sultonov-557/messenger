@@ -1,6 +1,6 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { DataSource, Like, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
+import { Like, Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { HttpError } from 'src/common/exception/http.error';
 import { decrypt, encrypt } from 'src/common/utils/hash/hashing.utils';
@@ -12,11 +12,11 @@ import { sign, verify } from 'jsonwebtoken';
 import { compare, hash } from 'bcryptjs';
 import { RefreshUserDto } from './dto/refresh-user.dto';
 import { Role } from 'src/common/auth/roles/role.enum';
-import { InjectRepository } from '@nestjs/typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly userRepo: Repository<User>) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
 
   async register(dto: CreateUserDto) {
     const busyUsername = await this.userRepo.findOneBy({ username: dto.username });

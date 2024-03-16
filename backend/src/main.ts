@@ -5,7 +5,11 @@ import { NextFunction, Request, Response } from 'express';
 import { SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { ApiSwaggerOptions } from './common/swagger/config.swagger';
-import { BadRequestExceptionFilter, HttpExceptionFilter } from './common/filter/httpException.filter';
+import {
+  AllExceptionsFilter,
+  BadRequestExceptionFilter,
+  HttpExceptionFilter,
+} from './common/filter/httpException.filter';
 import { env } from './common/config';
 
 async function bootstrap() {
@@ -21,6 +25,7 @@ async function bootstrap() {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     app.useGlobalFilters(new HttpExceptionFilter());
     app.useGlobalFilters(new BadRequestExceptionFilter());
+    app.useGlobalFilters(new AllExceptionsFilter());
     app.enableShutdownHooks();
     app.use(helmet());
     app.use((_: Request, res: Response, next: NextFunction) => {

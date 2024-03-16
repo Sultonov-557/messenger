@@ -5,7 +5,7 @@ import { UserModule } from './modules/User/User.module';
 import { MessageModule } from './modules/message/message.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(mainDbConfig), UserModule, MessageModule],
+  imports: [TypeOrmModule.forRoot(mainDbConfig), MessageModule, UserModule],
   controllers: [],
   providers: [],
 })

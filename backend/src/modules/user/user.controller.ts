@@ -35,7 +35,7 @@ export class UserController {
   }
 
   @Post('register')
-  @DecoratorWrapper('user yaratish', true, [Role.Admin])
+  @DecoratorWrapper('user yaratish')
   async register(@Body() dto: CreateUserDto) {
     return CoreApiResponse.success(await this.userService.register(dto));
   }

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { isObject } from 'class-validator';
 import { CoreApiResponse } from '../response/core.responce';
+import { BaseWsExceptionFilter } from '@nestjs/websockets';
 
 export const getStatusCode = (exception: unknown): number => {
   return exception instanceof HttpException ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
@@ -49,5 +50,12 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
         message: exception?.response || exception?.message || exception,
       }),
     );
+  }
+}
+
+@Catch()
+export class AllExceptionsFilter extends BaseWsExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
+    super.catch(exception, host);
   }
 }

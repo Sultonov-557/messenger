@@ -17,7 +17,39 @@ export class RolesGuard implements CanActivate {
         context.getClass(),
       ]);
       const request = context.switchToHttp().getRequest();
-      let bearer_token = request.headers['authorization'];
+
+      let bearer_token = request.headers?.authorization;
+
+      if (!bearer_token) {
+        HttpError({ code: 'BEARER_TOKEN_NOT_PROVIDED' });
+      }
+      bearer_token = bearer_token.split(' ')[1];
+
+      const valid_user: any = verify(bearer_token, env.ACCESS_TOKEN_SECRET);
+      if (!valid_user) HttpError({ code: 'LOGIN_FAILED' });
+
+      request.user = { ...valid_user };
+      return required_roles?.includes(valid_user.role);
+    } catch (error) {
+      if (error.message == 'jwt expired') HttpError({ code: 'JWT_EXPIRED' });
+      if (error instanceof JsonWebTokenError) HttpError({ code: 'JWT_INVALID' });
+      throw error;
+    }
+  }
+}
+
+export class RolesWSGuard implements CanActivate {
+  constructor(private reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    try {
+      const required_roles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ]);
+      const request = context.switchToWs().getClient();
+
+      let bearer_token = request.handshake.headers?.authorization;
 
       if (!bearer_token) {
         HttpError({ code: 'BEARER_TOKEN_NOT_PROVIDED' });
