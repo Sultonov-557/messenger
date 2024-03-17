@@ -3,6 +3,7 @@ import { SnakeNamingStrategy } from './namingStrategy.database';
 import { env } from '../config';
 import { User } from '../../modules/user/entities/user.entity';
 import { Message } from '../../modules/message/entities/message.entity';
+import { Group } from 'src/modules/group/entities/group.entity';
 
 export const mainDbConfig: MysqlConnectionOptions = {
   type: 'mysql',
@@ -12,7 +13,7 @@ export const mainDbConfig: MysqlConnectionOptions = {
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [User, Message],
+  entities: [User, Message, Group],
   synchronize: env.DB_SYNC,
   logger: 'advanced-console',
   logging: ['error'],
