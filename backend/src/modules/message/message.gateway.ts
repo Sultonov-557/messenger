@@ -20,8 +20,15 @@ export class MessageGateway {
     const message = await this.messageService.create(req.user.id, body);
     if (message.success) {
       this.server.emit('new_message', message.data);
-    } else {
-      return message;
+    }
+  }
+
+  @SubscribeMessage('delete_message')
+  @DecoratorWrapperWS('deleteMessage', true, [Role.User])
+  async deleteMessage(@MessageBody() body: { id: number }, @Req() req: Request) {
+    const message = await this.messageService.delete(req.user.id, req.user.id);
+    if (message.success) {
+      this.server.emit('new_message', message.data);
     }
   }
 }

@@ -32,10 +32,12 @@ export class MessageService {
     return { success: true, data: { created_at, id, updated_at, sender_id: sender.id } };
   }
 
-  async delete(id: number) {
-    const message = await this.messageRepo.findOneBy({ id });
-    if (!message) HttpError({ code: 'MESSAGE_NOT_FOUND' });
-    return (await this.messageRepo.delete({ id: message.id })).raw;
+  async delete(messageID: number, userID: number) {
+    const message = await this.messageRepo.findOneBy({ id: messageID });
+    if (!message) return { success: false, error: 'MESSAGE_NOT_FOUND' };
+    if (message.sender.id != userID) return { success: false, error: 'ACCESS_DENIED' };
+    await this.messageRepo.delete({ id: message.id });
+    return { success: true, data: { id: message.id } };
   }
 
   async getAll(query: GetMessageQueryDto) {
