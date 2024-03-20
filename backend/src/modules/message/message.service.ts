@@ -1,38 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { HttpError } from 'src/common/exception/http.error';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { GetMessageQueryDto } from './dto/get-message-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Request } from 'express';
 import { User } from '../user/entities/user.entity';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+import { Group } from '../group/entities/group.entity';
 
 @Injectable()
 export class MessageService {
   constructor(
     @InjectRepository(Message) private readonly messageRepo: Repository<Message>,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(Group) private readonly groupRepo: Repository<Group>,
   ) {}
 
-  async create(userID: number, dto: CreateMessageDto) {
-    const { text } = dto;
-    const sender = await this.userRepo.findOneBy({ id: userID });
+  async create(sender_id: number, dto: CreateMessageDto) {
+    const { text, group_id } = dto;
+
+    const sender = await this.userRepo.findOneBy({ id: sender_id });
+    const group = await this.groupRepo.findOneBy({ id: group_id, users: { id: sender_id } });
 
     if (!sender) return { success: false, error: 'USER_NOT_FOUND' };
+    if (!group) return { success: false, error: 'GROUP_NOT_FOUND' };
 
-    const message = await this.messageRepo.create({ text, sender });
+    const message = await this.messageRepo.create({ text, sender, group });
 
     await this.messageRepo.save(message);
     const { created_at, id, updated_at } = message;
 
-    return { success: true, data: { created_at, id, updated_at, sender_id: sender.id } };
+    return { success: true, data: { created_at, id, updated_at, sender_id, group_id } };
   }
 
-  async delete(messageID: number, userID: number) {
+  async delete(userID: number, messageID: number) {
     const message = await this.messageRepo.findOneBy({ id: messageID });
     if (!message) return { success: false, error: 'MESSAGE_NOT_FOUND' };
     if (message.sender.id != userID) return { success: false, error: 'ACCESS_DENIED' };

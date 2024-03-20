@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty } from 'class-validator';
+import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class CreateMessageDto {
   @ApiProperty()
   @IsNotEmpty()
   text: string;
 
-  fromID: number;
+  @ApiProperty()
+  @IsInt()
+  group_id: number;
 }

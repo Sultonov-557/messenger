@@ -26,7 +26,7 @@ export class MessageGateway {
   @SubscribeMessage('delete_message')
   @DecoratorWrapperWS('deleteMessage', true, [Role.User])
   async deleteMessage(@MessageBody() body: { id: number }, @Req() req: Request) {
-    const message = await this.messageService.delete(req.user.id, req.user.id);
+    const message = await this.messageService.delete(req.user.id, body.id);
     if (message.success) {
       this.server.emit('new_message', message.data);
     }
