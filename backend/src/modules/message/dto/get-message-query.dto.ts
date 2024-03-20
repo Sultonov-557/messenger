@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional } from 'class-validator';
+import { IsInt, IsOptional, IsString } from 'class-validator';
 
 export class GetMessageQueryDto {
   @ApiPropertyOptional()
@@ -14,4 +14,15 @@ export class GetMessageQueryDto {
   @IsInt()
   @Type(() => Number)
   limit?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  group_id?: number;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  query?: string;
 }
