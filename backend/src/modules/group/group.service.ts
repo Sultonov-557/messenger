@@ -15,7 +15,10 @@ export class GroupService {
     @InjectRepository(GroupUser) private groupUserRepo: Repository<GroupUser>,
   ) {}
 
-  async create(dto: CreateGroupDto) {}
+  async create(dto: CreateGroupDto) {
+    const group = await this.groupRepo.create(dto);
+    return await this.groupRepo.save(group);
+  }
 
   async join(user_id: number, group_id: number) {
     const group = await this.groupRepo.findOneBy({ id: group_id, users: { id: Not(user_id) } });
