@@ -6,7 +6,12 @@ import { MessageModule } from './modules/message/message.module';
 import { GroupModule } from './modules/group/group.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(mainDbConfig), UserModule, GroupModule, MessageModule],
+  imports: [
+    TypeOrmModule.forRoot(mainDbConfig),
+    UserModule,
+    GroupModule,
+    MessageModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -1,12 +1,8 @@
-import { MysqlConnectionOptions } from 'typeorm/driver/mysql/MysqlConnectionOptions';
 import { SnakeNamingStrategy } from './namingStrategy.database';
 import { env } from '../config';
-import { User } from '../../modules/user/entities/user.entity';
-import { Message } from '../../modules/message/entities/message.entity';
-import { Group } from 'src/modules/group/entities/group.entity';
-import { GroupUser } from 'src/modules/group/entities/group-user.entity';
+import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-export const mainDbConfig: MysqlConnectionOptions = {
+export const mainDbConfig: TypeOrmModuleOptions = {
   type: 'mysql',
   host: env.DB_HOST,
   port: Number(env.DB_PORT),
@@ -14,8 +10,8 @@ export const mainDbConfig: MysqlConnectionOptions = {
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [User, Message, Group, GroupUser],
-  cache:true,
+  autoLoadEntities: true,
+  cache: true,
   synchronize: env.DB_SYNC,
   logger: 'advanced-console',
   logging: ['error'],

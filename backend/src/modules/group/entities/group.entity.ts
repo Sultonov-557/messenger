@@ -1,18 +1,16 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Message } from 'src/modules/message/entities/message.entity';
-import { User } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, JoinTable, OneToMany } from 'typeorm';
+import { GroupUser } from './group-user.entity';
 
 @Entity()
 export class Group extends AbstractEntity {
   @Column()
   name: string;
 
-  @ManyToMany(() => User, (user) => user.groups)
-  @JoinTable()
-  users: User[];
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.group)
+  group_users: GroupUser[];
 
   @OneToMany(() => Message, (message) => message.group)
-  @JoinTable()
   messages: Message[];
 }

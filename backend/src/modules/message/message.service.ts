@@ -21,7 +21,7 @@ export class MessageService {
     const { text, group_id } = dto;
 
     const sender = await this.userRepo.findOneBy({ id: sender_id });
-    const group = await this.groupRepo.findOneBy({ id: group_id, users: { id: sender_id } });
+    const group = await this.groupRepo.findOneBy({ id: group_id, group_users: { user: { id: sender_id } } });
 
     if (!sender) return { success: false, error: 'USER_NOT_FOUND' };
     if (!group) return { success: false, error: 'GROUP_NOT_FOUND' };

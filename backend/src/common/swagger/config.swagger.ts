@@ -1,8 +1,7 @@
 import { DocumentBuilder } from '@nestjs/swagger';
 
 export const ApiSwaggerOptions = new DocumentBuilder()
-  .setTitle('Zenclass')
-  .setDescription('Zenclass documantation')
+  .setTitle('Swagger')
   .setVersion('1.0')
   .addBearerAuth(
     {
