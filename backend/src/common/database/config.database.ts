@@ -4,6 +4,7 @@ import { env } from '../config';
 import { User } from '../../modules/user/entities/user.entity';
 import { Message } from '../../modules/message/entities/message.entity';
 import { Group } from 'src/modules/group/entities/group.entity';
+import { GroupUser } from 'src/modules/group/entities/group-user.entity';
 
 export const mainDbConfig: MysqlConnectionOptions = {
   type: 'mysql',
@@ -13,7 +14,7 @@ export const mainDbConfig: MysqlConnectionOptions = {
   password: env.DB_PASSWORD,
   database: env.DB_NAME,
   namingStrategy: new SnakeNamingStrategy(),
-  entities: [User, Message, Group],
+  entities: [User, Message, Group, GroupUser],
   synchronize: env.DB_SYNC,
   logger: 'advanced-console',
   logging: ['error'],

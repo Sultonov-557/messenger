@@ -7,7 +7,7 @@ import { MessageService } from './message.service';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { Role } from 'src/common/auth/roles/role.enum';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class MessageGateway {
   constructor(private messageService: MessageService) {}
 
