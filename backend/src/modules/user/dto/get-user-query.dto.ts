@@ -1,21 +1,9 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import { IsInt, IsOptional } from 'class-validator';
+import { IsOptional } from 'class-validator';
+import { PaginationDto } from 'src/common/dtos/pagination.dto';
 
-export class GetUserQueryDto {
+export class GetUserQueryDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsOptional()
   username?: string;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  page?: number;
-
-  @ApiPropertyOptional()
-  @IsOptional()
-  @IsInt()
-  @Type(() => Number)
-  limit?: number;
 }

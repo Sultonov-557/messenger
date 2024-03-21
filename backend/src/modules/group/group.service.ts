@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
 import { HttpError } from 'src/common/exception/http.error';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { GroupUser } from './entities/group-user.entity';
+import { FindGroupDto } from './dto/find-group.dto';
 
 @Injectable()
 export class GroupService {
@@ -44,5 +45,13 @@ export class GroupService {
     await this.groupRepo.delete(groupUser);
 
     return {};
+  }
+
+  async findAll(query: FindGroupDto, user_id: number) {
+    const groups = await this.groupRepo.find({
+      where: { name: Like(`%${query.name || ''}%`), users: { id: query.joined ? user_id : undefined } },
+    });
+
+    return groups;
   }
 }

@@ -15,6 +15,7 @@ export const mainDbConfig: MysqlConnectionOptions = {
   database: env.DB_NAME,
   namingStrategy: new SnakeNamingStrategy(),
   entities: [User, Message, Group, GroupUser],
+  cache:true,
   synchronize: env.DB_SYNC,
   logger: 'advanced-console',
   logging: ['error'],
