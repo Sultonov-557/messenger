@@ -63,7 +63,6 @@ export class GroupService {
       },
       take: limit,
       skip: (page - 1) * limit,
-      relations: { group_users: { user: true } },
     });
 
     return { data, total, limit, page };
