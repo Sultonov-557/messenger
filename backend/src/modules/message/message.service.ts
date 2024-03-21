@@ -8,6 +8,7 @@ import { GetMessageQueryDto } from './dto/get-message-query.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
 import { Group } from '../group/entities/group.entity';
+import { UpdateService } from '../update/update.service';
 
 @Injectable()
 export class MessageService {
@@ -15,6 +16,7 @@ export class MessageService {
     @InjectRepository(Message) private readonly messageRepo: Repository<Message>,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     @InjectRepository(Group) private readonly groupRepo: Repository<Group>,
+    private updateService: UpdateService,
   ) {}
 
   async create(sender_id: number, dto: CreateMessageDto) {
@@ -27,30 +29,36 @@ export class MessageService {
     if (!group) return { success: false, error: 'GROUP_NOT_FOUND' };
 
     const message = await this.messageRepo.create({ text, sender, group });
-
     await this.messageRepo.save(message);
-    const { created_at, id, updated_at } = message;
 
-    return { success: true, data: { created_at, id, updated_at, sender_id, group_id } };
+    group.group_users.forEach(async (groupUser) => {
+      await this.updateService.addUpdate(groupUser.user.id, { name: 'create_message', data: message });
+    });
+
+    return message;
   }
 
-  async delete(userID: number, messageID: number) {
-    const message = await this.messageRepo.findOneBy({ id: messageID });
+  async delete(user_id: number, message_id: number) {
+    const message = await this.messageRepo.findOneBy({ id: message_id });
     if (!message) return { success: false, error: 'MESSAGE_NOT_FOUND' };
-    if (message.sender.id != userID) return { success: false, error: 'ACCESS_DENIED' };
+    if (message.sender.id != user_id) return { success: false, error: 'ACCESS_DENIED' };
     await this.messageRepo.delete({ id: message.id });
-    return { success: true, data: { id: message.id } };
+
+    message.group.group_users.forEach(async (groupUser) => {
+      await this.updateService.addUpdate(groupUser.user.id, { name: 'delete_message', data: message });
+    });
+    return {};
   }
 
   async getAll(query: GetMessageQueryDto) {
     const { limit = 10, page = 1 } = query;
-    const [result, total] = await this.messageRepo.findAndCount({
+    const [data, total] = await this.messageRepo.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
       order: { created_at: 'DESC' },
     });
 
-    return { total, page, limit, data: result };
+    return { total, page, limit, data };
   }
 
   async getOne(id: number) {
@@ -66,6 +74,10 @@ export class MessageService {
     for (const key in message) {
       if (Object.prototype.hasOwnProperty.call(dto, key)) message[key] = dto[key];
     }
+
+    message.group.group_users.forEach(async (groupUser) => {
+      await this.updateService.addUpdate(groupUser.user.id, { name: 'update_message', data: message });
+    });
 
     return await this.messageRepo.save(message);
   }

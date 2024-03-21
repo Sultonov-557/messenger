@@ -13,11 +13,12 @@ import { compare, hash } from 'bcryptjs';
 import { RefreshUserDto } from './dto/refresh-user.dto';
 import { Role } from 'src/common/auth/roles/role.enum';
 import { User } from './entities/user.entity';
-import { Exclude } from 'class-transformer';
+import { UpdateModule } from '../update/update.module';
+import { UpdateService } from '../update/update.service';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private userRepo: Repository<User>) {}
+  constructor(@InjectRepository(User) private userRepo: Repository<User>, private updateService: UpdateService) {}
 
   async register(dto: CreateUserDto) {
     const busyUsername = await this.userRepo.findOneBy({ username: dto.username });
@@ -116,6 +117,8 @@ export class UserService {
       const busyUsername = await this.userRepo.findOneBy({ username: dto.username });
       if (busyUsername) HttpError({ code: 'BUSY_USERNAME' });
     }
+
+    this.updateService.addUpdate(id, { name: 'user_update', data: user });
 
     return await this.userRepo.save(user);
   }
