@@ -23,18 +23,24 @@ export class MessageService {
     const { text, group_id } = dto;
 
     const sender = await this.userRepo.findOneBy({ id: sender_id });
-    const group = await this.groupRepo.findOneBy({ id: group_id, group_users: { user: { id: sender_id } } });
-
-    if (!sender) return { success: false, error: 'USER_NOT_FOUND' };
-    if (!group) return { success: false, error: 'GROUP_NOT_FOUND' };
-
-    const message = await this.messageRepo.create({ text, sender, group });
-    await this.messageRepo.save(message);
-
-    group.group_users.forEach(async (groupUser) => {
-      await this.updateService.addUpdate(groupUser.user.id, { name: 'create_message', data: message });
+    const group = await this.groupRepo.findOne({
+      where: { id: group_id, group_users: { user: { id: sender_id } } },
+      relations: { group_users: { user: true } },
     });
 
+    if (!sender) HttpError({ code: 'USER_NOT_FOUND' });
+    if (!group) HttpError({ code: 'GROUP_NOT_FOUND' });
+
+    const message = await this.messageRepo.create({ text, sender, group });
+    const { id, created_at } = message;
+    group.group_users.forEach(async (groupUser) => {
+      await this.updateService.addUpdate(groupUser.user.id, {
+        name: 'create_message',
+        data: { id, text, sender_id, group_id },
+      });
+    });
+
+    await this.messageRepo.save(message);
     return message;
   }
 

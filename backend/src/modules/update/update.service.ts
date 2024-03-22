@@ -2,14 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Update } from './entities/update.entity';
 import { Repository } from 'typeorm';
-import { RemoteSocket, Server } from 'socket.io';
-import { WebSocketServer } from '@nestjs/websockets';
-import { Socket } from 'dgram';
+import { Server, Socket } from 'socket.io';
+import { OnGatewayConnection, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { User } from '../User/entities/user.entity';
 import { HttpError } from 'src/common/exception/http.error';
+import { verify } from 'jsonwebtoken';
+import { env } from 'src/common/config';
 
 @Injectable()
-export class UpdateService {
+@WebSocketGateway({ cors: true })
+export class UpdateService implements OnGatewayConnection {
   constructor(
     @InjectRepository(Update) private updateRepo: Repository<Update>,
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -18,10 +20,29 @@ export class UpdateService {
   @WebSocketServer()
   private server: Server;
 
-  async getUpdates(user_id: number) {
-    const updates = await this.updateRepo.find({ where: { to: { id: user_id } } });
+  async handleConnection(client: Socket) {
+    let bearer_token = client.handshake.headers.authorization;
 
-    return updates;
+    if (!bearer_token) {
+      client.disconnect();
+    }
+    bearer_token = bearer_token.split(' ')[1];
+
+    const user: any = verify(bearer_token, env.ACCESS_TOKEN_SECRET);
+    if (!user) client.disconnect();
+
+    client.data.user_id = user.id;
+
+    const updates = await this.getUpdates(user.id);
+
+    for (let update of updates) {
+      client.emit(update.name, update.data);
+      await this.deleteUpdate(update.id);
+    }
+  }
+
+  async getUpdates(user_id: number) {
+    return await this.updateRepo.find({ where: { to: { id: user_id } } });
   }
 
   async addUpdate(user_id: number, update: { name: string; data: object }) {
@@ -36,9 +57,7 @@ export class UpdateService {
 
     if (!user) HttpError({ code: 'USER_NOT_FOUND' });
 
-    return await this.updateRepo.save(
-      this.updateRepo.create({ name: update.name, data: JSON.stringify(update.data), to: user }),
-    );
+    return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
   }
 
   async deleteUpdate(id: number) {

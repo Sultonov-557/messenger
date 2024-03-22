@@ -1,10 +1,11 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { User } from 'src/modules/User/entities/user.entity';
-import { Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
+@Entity()
 export class Update extends AbstractEntity {
-  @Column()
-  data: string;
+  @Column({ type: 'json' })
+  data: object;
 
   @Column()
   name: string;
