@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { HttpError } from 'src/common/exception/http.error';
@@ -57,8 +57,9 @@ export class MessageService {
   }
 
   async getAll(query: GetMessageQueryDto) {
-    const { limit = 10, page = 1 } = query;
+    const { limit = 10, page = 1, group_id, text } = query;
     const [data, total] = await this.messageRepo.findAndCount({
+      where: { group: { id: group_id }, text: Like(`%${text || ''}%`) },
       skip: (page - 1) * limit,
       take: limit,
       order: { created_at: 'DESC' },

@@ -13,7 +13,6 @@ import { compare, hash } from 'bcryptjs';
 import { RefreshUserDto } from './dto/refresh-user.dto';
 import { Role } from 'src/common/auth/roles/role.enum';
 import { User } from './entities/user.entity';
-import { UpdateModule } from '../update/update.module';
 import { UpdateService } from '../update/update.service';
 
 @Injectable()

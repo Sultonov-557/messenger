@@ -11,5 +11,5 @@ export class GetMessageQueryDto extends PaginationDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
-  query?: string;
+  text?: string;
 }
