@@ -8,7 +8,7 @@ class Api {
 			const res = await axios.get(BACKEND_URL + url, { params: query, headers: { Authorization: `bearer ${token}` } });
 			return res.data;
 		} catch (error: any) {
-			return error.response.data;
+			return error.response?.data || { success: false, error: "UNKNOWN" };
 		}
 	}
 }

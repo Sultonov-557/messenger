@@ -16,6 +16,7 @@ const config = {
 			colors: {
 				background: "#131313",
 				foreground: "#252525",
+				button: "#50ff50",
 			},
 		},
 	},
