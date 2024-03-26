@@ -1,13 +1,14 @@
-"use client";
 import { api } from "@/utils/api";
-import { useState } from "react";
+import { cookies } from "next/headers";
+import Group from "./group";
 
 export async function Groups() {
-	const [groups, setGroups] = useState([]);
+	const cookieStore = cookies();
+	let groups: any = [];
 
-	const res = await api.get("/group", {});
+	const res = await api.get("/group", {}, cookieStore.get("access_token")?.value);
 
-	setGroups(res.data.data.map((v: any) => v.name));
+	groups = res.data.data.map((v: any) => <Group id={v.id} name={v.name} />);
 
 	return <div className="w-96 h-full bg-foreground">{groups}</div>;
 }

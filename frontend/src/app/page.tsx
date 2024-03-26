@@ -1,4 +1,3 @@
-"use client";
 import { Groups } from "@/components/groups";
 
 export default function Home() {

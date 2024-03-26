@@ -46,8 +46,14 @@ export class UserController {
     return CoreApiResponse.success(await this.userService.getAll(dto));
   }
 
+  @Get('me')
+  @DecoratorWrapper('userni olish', true, [Role.User])
+  async getMe(@Req() req: Request) {
+    return CoreApiResponse.success(await this.userService.getOne(req.user.id));
+  }
+
   @Get(':id')
-  @DecoratorWrapper('Bitta userni olish', true, [Role.Admin])
+  @DecoratorWrapper('Bitta userni olish', true, [Role.User])
   async getOne(@Param('id', ParseIntPipe) id: number) {
     return CoreApiResponse.success(await this.userService.getOne(id));
   }

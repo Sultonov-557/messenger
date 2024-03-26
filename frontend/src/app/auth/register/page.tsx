@@ -34,7 +34,7 @@ export default function RegisterPage() {
 				<form className="p-6 rounded-lg" onSubmit={handleSubmit}>
 					<input name="username" type="username" placeholder="Username" className="w-full p-2 rounded mb-4 bg-background border-2 border-foreground focus:outline-none" />
 					<input name="password" type="password" placeholder="Password" className="w-full p-2 rounded mb-4 bg-background border-2 border-foreground focus:outline-none" />
-					<button type="submit" className="bg-foreground text-white p-2 rounded w-full">
+					<button type="submit" className="bg-button text-white p-2 rounded w-full">
 						Register
 					</button>
 				</form>
