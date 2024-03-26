@@ -14,9 +14,9 @@ const config = {
 		},
 		extend: {
 			colors: {
-				background: "#131313",
-				foreground: "#252525",
-				button: "#50ff50",
+				background: "#111827",
+				foreground: "#6366f1",
+				link: "#6366f1",
 			},
 		},
 	},

@@ -1,11 +1,17 @@
-import Button from "@/components/ui/button";
+export default function AuthPage() {
 
-export default function Auth() {
 	return (
-		<div className="w-full h-full flex justify-center items-center">
-			<div className="size-96 bg-slate-500">
-				<Button className="w-60 h-36 bg-button ">Login</Button>
-				<Button className="w-60 h-36 bg-button ">Register</Button>
+		<div className=" h-screen flex items-center">
+			<div className="max-w-md mx-auto p-5 rounded-md shadow-md">
+				<h1 className="text-2xl font-medium text-white">
+					<a href="./auth/login" className="text-link underline">
+						login
+					</a>{" "}
+					or{" "}
+					<a href="./auth/register" className="text-link underline">
+						create new account
+					</a>
+				</h1>
 			</div>
 		</div>
 	);

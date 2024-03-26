@@ -11,6 +11,15 @@ class Api {
 			return error.response?.data || { success: false, error: "UNKNOWN" };
 		}
 	}
+
+	async post(url: string, data?: object, token?: string) {
+		try {
+			const res = await axios.post(BACKEND_URL + url, data, { headers: { Authorization: `bearer ${token}` } });
+			return res.data;
+		} catch (error: any) {
+			return error.response?.data || { success: false, error: "UNKNOWN" };
+		}
+	}
 }
 
 export const api = new Api();
