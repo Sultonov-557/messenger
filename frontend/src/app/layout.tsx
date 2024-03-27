@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={inter.className + " bg-background w-screen h-screen text-white"}>
+			<body className={inter.className + " bg-background w-screen h-screen text-white overflow-hidden"}>
 				<CookiesProvider>
 					<main className="flex w-full h-full flex-row">
 						<Groups></Groups>

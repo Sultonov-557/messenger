@@ -14,10 +14,10 @@ const config = {
 		},
 		extend: {
 			colors: {
-				background: "#111827",
-				foreground: "#1f2937",
-				button: "#6366f1",
-				link: "#6366f1",
+				background: "#181818",
+				foreground: "#212121",
+				button: "#8774e1",
+				link: "#62569c",
 			},
 		},
 	},

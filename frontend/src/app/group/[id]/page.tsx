@@ -9,7 +9,7 @@ export default async function GroupPage() {
 	const group = await api.get(`/group/${id}`);
 
 	return (
-		<div>
+		<div className="w-full h-full">
 			<h1>{group.name}</h1>
 
 			<MessageList id={group.id} />
