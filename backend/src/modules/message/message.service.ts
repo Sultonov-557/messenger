@@ -58,11 +58,20 @@ export class MessageService {
 
   async getAll(query: GetMessageQueryDto) {
     const { limit = 10, page = 1, group_id, text } = query;
-    const [data, total] = await this.messageRepo.findAndCount({
+    const [messages, total] = await this.messageRepo.findAndCount({
       where: { group: { id: group_id }, text: Like(`%${text || ''}%`) },
       skip: (page - 1) * limit,
+      relations: { group: true, sender: true },
       take: limit,
-      order: { created_at: 'DESC' },
+    });
+
+    const data = messages.map((message) => {
+      return {
+        id: message.id,
+        group_id: message.group.id,
+        text: message.text,
+        sender: { id: message.sender.id, username: message.sender.username },
+      };
     });
 
     return { total, page, limit, data };

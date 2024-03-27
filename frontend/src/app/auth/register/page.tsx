@@ -19,7 +19,7 @@ export default function RegisterPage() {
 			cookieStore.set("access_token", response.data.access_token);
 			cookieStore.set("refresh_token", response.data.refresh_token);
 
-			window.location.href = "./";
+			window.location.href = "../";
 		} else {
 			console.error("Registration failed");
 			console.log(response);

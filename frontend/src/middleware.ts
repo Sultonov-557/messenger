@@ -6,20 +6,22 @@ export async function middleware(request: NextRequest) {
 	if (request.nextUrl.pathname.startsWith("/_next")) return;
 
 	if (!request.nextUrl.pathname.startsWith("/auth")) {
+		let url = request.nextUrl.clone();
+		url.pathname = "/auth";
 		const authHeader = request.cookies.get("access_token")?.value;
 
 		if (!authHeader) {
-			let url = request.nextUrl.clone();
-			url.pathname = "/auth";
 			return NextResponse.redirect(url);
 		}
 
 		const token = authHeader;
 
-		let res = await (await fetch(BACKEND_URL + "/user/me", { headers: { authorization: `Bearer ${token}` } })).json();
-		if (!res.success) {
-			let url = request.nextUrl.clone();
-			url.pathname = "/auth";
+		try {
+			let res = await (await fetch(BACKEND_URL + "/user/me", { headers: { authorization: `Bearer ${token}` } })).json();
+			if (!res.success) {
+				return NextResponse.redirect(url);
+			}
+		} catch {
 			return NextResponse.redirect(url);
 		}
 	}

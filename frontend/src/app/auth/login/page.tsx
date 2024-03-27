@@ -19,7 +19,7 @@ export default function LoginPage() {
 			cookieStore.set("access_token", response.data.access_token);
 			cookieStore.set("refresh_token", response.data.refresh_token);
 
-			window.location.href = "./";
+			window.location.href = "../";
 		} else {
 			console.error("Login failed");
 			alert("Invalid username or password");
@@ -27,7 +27,7 @@ export default function LoginPage() {
 	};
 
 	return (
-		<div className="h-screen flex items-center">
+		<div className="h-screen w-screen flex items-center">
 			<div className="max-w-md mx-auto p-5 rounded-md shadow-md text-center">
 				<h1 className="text-2xl font-medium text-white">Login</h1>
 				<form className="p-6 rounded-lg" onSubmit={handleSubmit}>

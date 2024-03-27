@@ -1,10 +1,5 @@
-import { Groups } from "@/components/groups";
+import { Groups } from "@/components/Groups";
 
 export default function Home() {
-	return (
-		<main className="flex w-full h-full flex-row">
-			<Groups></Groups>
-			<div className="w-full h-full bg-background"></div>
-		</main>
-	);
+	return <div></div>;
 }

@@ -6,7 +6,7 @@ interface Props {
 
 const Group = ({ name, id }: Props) => {
 	const handleClick = () => {
-		// display chat for this group
+		window.location.href = `/group/${id}`;
 	};
 
 	return (
