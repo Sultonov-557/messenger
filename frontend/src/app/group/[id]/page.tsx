@@ -12,7 +12,7 @@ export default async function GroupPage() {
 		<div className="w-full h-full">
 			<h1>{group.name}</h1>
 
-			<MessageList id={group.id} />
+			<MessageList id={+id} />
 		</div>
 	);
 }

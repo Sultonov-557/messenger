@@ -3,7 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Update } from './entities/update.entity';
 import { Repository } from 'typeorm';
 import { Server, Socket } from 'socket.io';
-import { OnGatewayConnection, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
 import { User } from '../User/entities/user.entity';
 import { HttpError } from 'src/common/exception/http.error';
 import { verify } from 'jsonwebtoken';
@@ -11,7 +17,7 @@ import { env } from 'src/common/config';
 
 @Injectable()
 @WebSocketGateway({ cors: true })
-export class UpdateService implements OnGatewayConnection {
+export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
   constructor(
     @InjectRepository(Update) private updateRepo: Repository<Update>,
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -25,6 +31,7 @@ export class UpdateService implements OnGatewayConnection {
 
     if (!bearer_token) {
       client.disconnect();
+      return;
     }
     bearer_token = bearer_token.split(' ')[1];
 
@@ -41,14 +48,24 @@ export class UpdateService implements OnGatewayConnection {
     }
   }
 
+  handleDisconnect(client: Socket) {
+    client.data = {};
+  }
+
+  @SubscribeMessage('ping')
+  async ping() {
+    return 'pong';
+  }
+
   async getUpdates(user_id: number) {
     return await this.updateRepo.find({ where: { to: { id: user_id } } });
   }
 
   async addUpdate(user_id: number, update: { name: string; data: object }) {
-    const sockets = await this.server.fetchSockets();
+    const sockets = await this.server.sockets.sockets;
 
-    for (let socket of sockets) {
+    for (let socket_ of sockets) {
+      const socket = socket_[1];
       if (socket.data.user_id != user_id) continue;
       socket.emit(update.name, update.data);
       return;

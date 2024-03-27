@@ -67,4 +67,10 @@ export class GroupService {
 
     return { data, total, limit, page };
   }
+
+  async findOne(id: number) {
+    const group = await this.groupRepo.findOneBy({ id });
+    if (!group) HttpError({ code: 'GROUP_NOT_FOUND' });
+    return group;
+  }
 }

@@ -24,7 +24,7 @@ export class MessageService {
 
     const sender = await this.userRepo.findOneBy({ id: sender_id });
     const group = await this.groupRepo.findOne({
-      where: { id: group_id, group_users: { user: { id: sender_id } } },
+      where: { id: group_id },
       relations: { group_users: { user: true } },
     });
 

@@ -36,4 +36,10 @@ export class GroupController {
   async findAll(@Query() query: FindGroupDto, @Req() req: Request) {
     return CoreApiResponse.success(await this.groupService.findAll(query, req.user.id));
   }
+
+  @Get(':id')
+  @DecoratorWrapper('findOne group', false)
+  async findOne(@Param('id') id: string) {
+    return CoreApiResponse.success(await this.groupService.findOne(+id));
+  }
 }

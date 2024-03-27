@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../utils/api";
 import { Input } from "./Input";
+import { io } from "socket.io-client";
+import { useCookies } from "next-client-cookies";
 
 interface Message {
 	id: string;
@@ -11,6 +13,14 @@ interface Message {
 
 export default function MessageList({ id }: { id: number }) {
 	const [messages, setMessages] = useState<Message[]>([]);
+	const cookieStore = useCookies();
+	const access_token = cookieStore.get("access_token");
+
+	const connection = io("http://localhost:3001", { extraHeaders: { authorization: `bearer ${access_token}` } });
+
+	connection.onAny((ev) => {
+		console.log(ev);
+	});
 
 	useEffect(() => {
 		const fetchMessages = async () => {
