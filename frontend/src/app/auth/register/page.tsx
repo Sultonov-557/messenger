@@ -23,7 +23,7 @@ export default function RegisterPage() {
 		} else {
 			console.error("Registration failed");
 			console.log(response);
-			alert("Registration failed");
+			alert(`Registration failed ${response}.`);
 		}
 	};
 

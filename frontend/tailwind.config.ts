@@ -17,6 +17,7 @@ const config = {
 				background: "#181818",
 				foreground: "#212121",
 				button: "#8774e1",
+				"button-hover": "#8774e1",
 				link: "#62569c",
 			},
 		},

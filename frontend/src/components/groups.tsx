@@ -11,7 +11,7 @@ export async function Groups() {
 
 		groups = res.data.data.map((v: any) => <Group id={v.id} name={v.name} key={v.id} />);
 
-		return <div className="w-96 h-full bg-foreground">{groups}</div>;
+		return <div className="w-96 h-full bg-foreground   max-sm:hidden">{groups}</div>;
 	} catch {
 		return <div></div>;
 	}
