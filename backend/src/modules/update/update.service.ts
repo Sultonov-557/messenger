@@ -54,7 +54,6 @@ export class UpdateService implements OnGatewayConnection {
   }
 
   async addUpdate(user_id: number, update: { name: string; data: object }) {
-
     try {
       const socket = this.sockets[user_id];
 
@@ -71,6 +70,6 @@ export class UpdateService implements OnGatewayConnection {
 
     if (!update) HttpError({ code: 'UPDATE_NOT_FOUND' });
 
-    await this.updateRepo.delete(update);
+    await this.updateRepo.remove(update);
   }
 }
