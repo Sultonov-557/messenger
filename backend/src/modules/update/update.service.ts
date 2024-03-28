@@ -3,13 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Update } from './entities/update.entity';
 import { Repository } from 'typeorm';
 import { Server, Socket } from 'socket.io';
-import {
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-} from '@nestjs/websockets';
+import { OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { User } from '../User/entities/user.entity';
 import { HttpError } from 'src/common/exception/http.error';
 import { verify } from 'jsonwebtoken';
@@ -17,7 +11,7 @@ import { env } from 'src/common/config';
 
 @Injectable()
 @WebSocketGateway({ cors: true })
-export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
+export class UpdateService implements OnGatewayConnection {
   constructor(
     @InjectRepository(Update) private updateRepo: Repository<Update>,
     @InjectRepository(User) private userRepo: Repository<User>,
@@ -25,6 +19,8 @@ export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer()
   private server: Server;
+
+  private sockets: { [id: string]: Socket } = {};
 
   async handleConnection(client: Socket) {
     let bearer_token = client.handshake.headers.authorization;
@@ -38,7 +34,7 @@ export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
     const user: any = verify(bearer_token, env.ACCESS_TOKEN_SECRET);
     if (!user) client.disconnect();
 
-    client.data.user_id = user.id;
+    this.sockets[user.id] = client;
 
     const updates = await this.getUpdates(user.id);
 
@@ -46,10 +42,6 @@ export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
       client.emit(update.name, update.data);
       await this.deleteUpdate(update.id);
     }
-  }
-
-  handleDisconnect(client: Socket) {
-    client.data = {};
   }
 
   @SubscribeMessage('ping')
@@ -62,19 +54,21 @@ export class UpdateService implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   async addUpdate(user_id: number, update: { name: string; data: object }) {
-    const sockets = await this.server.sockets.sockets;
+    console.log(`adding update ${update.name} to ${user_id}`);
 
-    for (let socket_ of sockets) {
-      const socket = socket_[1];
-      if (socket.data.user_id != user_id) continue;
-      socket.emit(update.name, update.data);
-      return;
+    try {
+      const socket = this.sockets[user_id];
+
+      await socket.emitWithAck(update.name, update.data);
+      console.log('sended');
+    } catch {
+      const user = await this.userRepo.findOneBy({ id: user_id });
+
+      if (!user) HttpError({ code: 'USER_NOT_FOUND' });
+
+      console.log('added');
+      return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
     }
-    const user = await this.userRepo.findOneBy({ id: user_id });
-
-    if (!user) HttpError({ code: 'USER_NOT_FOUND' });
-
-    return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
   }
 
   async deleteUpdate(id: number) {

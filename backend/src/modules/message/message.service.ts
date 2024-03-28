@@ -36,7 +36,7 @@ export class MessageService {
     group.group_users.forEach(async (groupUser) => {
       await this.updateService.addUpdate(groupUser.user.id, {
         name: 'create_message',
-        data: { id, text, sender_id, group_id },
+        data: { id, text, sender_id, group_id, created_at },
       });
     });
 
