@@ -1,6 +1,6 @@
 import { api } from "@/utils/api";
 import { cookies } from "next/headers";
-import Group from "./Group";
+import Group from "./group";
 
 export async function Groups() {
 	const cookieStore = cookies();
