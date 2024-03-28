@@ -32,11 +32,16 @@ export class MessageService {
     if (!group) HttpError({ code: 'GROUP_NOT_FOUND' });
 
     const message = await this.messageRepo.create({ text, sender, group });
-    const { id, created_at } = message;
+
     group.group_users.forEach(async (groupUser) => {
       await this.updateService.addUpdate(groupUser.user.id, {
         name: 'create_message',
-        data: { id, text, sender_id, group_id, created_at },
+        data: {
+          id: message.id,
+          group_id: message.group.id,
+          text: message.text,
+          sender: { id: message.sender.id, username: message.sender.username },
+        },
       });
     });
 

@@ -59,7 +59,7 @@ export class UpdateService implements OnGatewayConnection {
     try {
       const socket = this.sockets[user_id];
 
-      await socket.emitWithAck(update.name, update.data);
+      await socket.emit(update.name, update.data);
       console.log('sended');
     } catch {
       const user = await this.userRepo.findOneBy({ id: user_id });
