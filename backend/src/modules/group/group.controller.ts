@@ -38,8 +38,8 @@ export class GroupController {
   }
 
   @Get(':id')
-  @DecoratorWrapper('findOne group', false)
-  async findOne(@Param('id') id: string) {
-    return CoreApiResponse.success(await this.groupService.findOne(+id));
+  @DecoratorWrapper('findOne group', true, [Role.User])
+  async findOne(@Param('id') id: string, @Req() req: Request) {
+    return CoreApiResponse.success(await this.groupService.findOne(+id, req.user.id));
   }
 }

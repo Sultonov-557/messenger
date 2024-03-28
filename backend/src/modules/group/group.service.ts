@@ -68,9 +68,14 @@ export class GroupService {
     return { data, total, limit, page };
   }
 
-  async findOne(id: number) {
-    const group = await this.groupRepo.findOneBy({ id });
+  async findOne(group_id: number, user_id: number) {
+    const group: Group & { joined?: boolean } = await this.groupRepo.findOne({ where: { id: group_id } });
     if (!group) HttpError({ code: 'GROUP_NOT_FOUND' });
+    if (await this.groupUserRepo.exists({ where: { group, user: { id: user_id } } })) {
+      group.joined = true;
+    } else {
+      group.joined = false;
+    }
     return group;
   }
 }
