@@ -54,19 +54,14 @@ export class UpdateService implements OnGatewayConnection {
   }
 
   async addUpdate(user_id: number, update: { name: string; data: object }) {
-    console.log(`adding update ${update.name} to ${user_id}`);
 
     try {
       const socket = this.sockets[user_id];
 
       await socket.emit(update.name, update.data);
-      console.log('sended');
     } catch {
       const user = await this.userRepo.findOneBy({ id: user_id });
-
       if (!user) HttpError({ code: 'USER_NOT_FOUND' });
-
-      console.log('added');
       return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
     }
   }
