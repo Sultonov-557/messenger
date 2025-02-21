@@ -5,7 +5,7 @@ import { RedisModule } from './common/redis/redis.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(mainDbConfig), RedisModule, UserModule],
+  imports: [TypeOrmModule.forRoot(mainDbConfig), UserModule],
   controllers: [],
   providers: [],
 })
