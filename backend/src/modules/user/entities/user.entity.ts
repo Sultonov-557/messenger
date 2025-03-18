@@ -8,6 +8,9 @@ export class User extends AbstractEntity {
   @Column({ unique: true })
   username: string;
 
+  @Column({ nullable: true })
+  bio: string;
+
   @Column()
   password: string;
 
@@ -17,6 +20,6 @@ export class User extends AbstractEntity {
   @Column({ nullable: true })
   refresh_token: string;
 
-  @OneToMany(() => GroupUser, (groupUser) => groupUser.group)
+  @OneToMany(() => GroupUser, (groupUser) => groupUser.user, { onDelete: 'SET NULL' })
   group_users: GroupUser[];
 }

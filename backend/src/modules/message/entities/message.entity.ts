@@ -8,11 +8,11 @@ export class Message extends AbstractEntity {
   @Column()
   text: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'SET NULL' })
   @JoinColumn()
   sender: User;
 
-  @ManyToOne(() => Group)
+  @ManyToOne(() => Group, { onDelete: 'CASCADE' })
   @JoinColumn()
   group: Group;
 }

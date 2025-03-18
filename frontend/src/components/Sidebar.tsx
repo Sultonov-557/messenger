@@ -6,8 +6,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCookies } from "next-client-cookies";
 
+interface GroupData {
+	id: number;
+	name: string;
+}
+
 export default function Sidebar() {
-	const [groups, setGroups] = useState<any[]>([]);
+	const [groups, setGroups] = useState<GroupData[]>([]);
 	const [username, setUsername] = useState<string>("");
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [newGroupName, setNewGroupName] = useState("");
@@ -29,7 +34,7 @@ export default function Sidebar() {
 
 		const fetchProfile = async () => {
 			try {
-				const res = await api.get("/user/profile", {}, cookieStore.get("access_token"));
+				const res = await api.get("/user/me", {}, cookieStore.get("access_token"));
 				if (res.success) {
 					setUsername(res.data.username);
 				}
@@ -92,7 +97,7 @@ export default function Sidebar() {
 			{/* Groups list */}
 			<div className="flex-1 overflow-y-auto py-2">
 				{groups.length > 0 ? (
-					groups.map((group) => <Group key={group.id} name={group.name} id={group.id} />)
+					groups.map((group) => <Group key={group.id} name={group.name} id={group.id.toString()} />)
 				) : (
 					<div className="text-center py-8 text-gray-400 px-4 max-sm:hidden">
 						No conversations yet. Create a new group to start chatting!

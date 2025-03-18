@@ -4,7 +4,7 @@ import { Update } from './entities/update.entity';
 import { Repository } from 'typeorm';
 import { Server, Socket } from 'socket.io';
 import { OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { User } from '../User/entities/user.entity';
+import { User } from '../user/entities/user.entity';
 import { HttpError } from 'src/common/exception/http.error';
 import { verify } from 'jsonwebtoken';
 import { env } from 'src/common/config';
@@ -23,24 +23,32 @@ export class UpdateService implements OnGatewayConnection {
   private sockets: { [id: string]: Socket } = {};
 
   async handleConnection(client: Socket) {
-    let bearer_token = client.handshake.headers.authorization;
+    try {
+      let bearer_token = client.handshake.headers.authorization;
 
-    if (!bearer_token) {
+      if (!bearer_token) {
+        client.disconnect();
+        return;
+      }
+      bearer_token = bearer_token.split(' ')[1];
+
+      const user: any = verify(bearer_token, env.ACCESS_TOKEN_SECRET);
+      if (!user) {
+        client.disconnect();
+        return;
+      }
+
+      this.sockets[user.id] = client;
+
+      const updates = await this.getUpdates(user.id);
+
+      for (const update of updates) {
+        client.emit(update.name, update.data);
+        await this.deleteUpdate(update.id);
+      }
+    } catch (error) {
+      console.error(`Socket connection error: ${error.message}`);
       client.disconnect();
-      return;
-    }
-    bearer_token = bearer_token.split(' ')[1];
-
-    const user: any = verify(bearer_token, env.ACCESS_TOKEN_SECRET);
-    if (!user) client.disconnect();
-
-    this.sockets[user.id] = client;
-
-    const updates = await this.getUpdates(user.id);
-
-    for (const update of updates) {
-      client.emit(update.name, update.data);
-      await this.deleteUpdate(update.id);
     }
   }
 
@@ -53,16 +61,23 @@ export class UpdateService implements OnGatewayConnection {
     return await this.updateRepo.find({ where: { to: { id: user_id } } });
   }
 
-  async addUpdate(user_id: number, update: { name: string; data: object }) {
-    try {
-      const socket = this.sockets[user_id];
+  async addUpdate(user_id: number, update: { name: string; data: Record<string, any> }) {
+    const socket = this.sockets[user_id];
 
-      await socket.emit(update.name, update.data);
-    } catch {
-      const user = await this.userRepo.findOneBy({ id: user_id });
-      if (!user) HttpError({ code: 'USER_NOT_FOUND' });
-      return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
+    if (socket) {
+      try {
+        await socket.emit(update.name, update.data);
+        return true;
+      } catch (error) {
+        // Socket emit failed, fall back to database storage
+        console.error(`Socket emit failed: ${error.message}`);
+      }
     }
+
+    // Store update in database if socket connection is not available or emit failed
+    const user = await this.userRepo.findOneBy({ id: user_id });
+    if (!user) HttpError({ code: 'USER_NOT_FOUND' });
+    return await this.updateRepo.save(this.updateRepo.create({ name: update.name, data: update.data, to: user }));
   }
 
   async deleteUpdate(id: number) {

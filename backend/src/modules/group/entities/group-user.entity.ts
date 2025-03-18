@@ -5,11 +5,11 @@ import { User } from 'src/modules/user/entities/user.entity';
 
 @Entity()
 export class GroupUser extends AbstractEntity {
-  @ManyToOne(() => Group, { nullable: false })
+  @ManyToOne(() => Group, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn()
   group: Group;
 
-  @ManyToOne(() => User, { nullable: false })
+  @ManyToOne(() => User, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn()
   user: User;
 

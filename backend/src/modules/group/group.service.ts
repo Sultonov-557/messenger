@@ -16,9 +16,15 @@ export class GroupService {
     @InjectRepository(GroupUser) private groupUserRepo: Repository<GroupUser>,
   ) {}
 
-  async create(dto: CreateGroupDto) {
+  async create(dto: CreateGroupDto, user_id: number) {
     const group = await this.groupRepo.create(dto);
-    return await this.groupRepo.save(group);
+    const user = await this.userRepo.findOneBy({ id: user_id });
+    if (!user) HttpError({ code: 'USER_NOT_FOUND' });
+
+    const groupUser = this.groupUserRepo.create({ group, user });
+    await this.groupUserRepo.save(groupUser);
+
+    return groupUser.group;
   }
 
   async join(user_id: number, group_id: number) {

@@ -52,6 +52,12 @@ export class UserController {
     return CoreApiResponse.success(await this.userService.getOne(req.user.id));
   }
 
+  @Patch('/me')
+  @DecoratorWrapper('userni tahrirlash', true, [Role.User])
+  async updateMe(@Req() req: Request, @Body() dto: UpdateUserDto) {
+    return CoreApiResponse.success(await this.userService.update(req.user.id, dto));
+  }
+
   @Get(':id')
   @DecoratorWrapper('Bitta userni olish', true, [Role.User])
   async getOne(@Param('id', ParseIntPipe) id: number) {

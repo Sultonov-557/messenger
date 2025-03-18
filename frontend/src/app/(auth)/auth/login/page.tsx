@@ -18,6 +18,12 @@ export default function LoginPage() {
 		const username = formData.get("username") as string;
 		const password = formData.get("password") as string;
 
+		if (!username.trim() || !password.trim()) {
+			setError("Username and password are required");
+			setLoading(false);
+			return;
+		}
+
 		try {
 			const response = await api.post("/user/login", {
 				username,
@@ -29,11 +35,12 @@ export default function LoginPage() {
 				cookieStore.set("refresh_token", response.data.refresh_token);
 				window.location.href = "../";
 			} else {
-				setError("Invalid username or password");
+				const errorMessage = response.message || "Invalid username or password";
+				setError(errorMessage);
 			}
-		} catch (error) {
-			setError("Something went wrong. Please try again.");
+		} catch (error: any) {
 			console.error("Login failed", error);
+			setError(error.message || "Something went wrong. Please try again.");
 		} finally {
 			setLoading(false);
 		}

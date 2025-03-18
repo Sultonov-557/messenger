@@ -5,4 +5,8 @@ export class UpdateUserDto {
   @ApiPropertyOptional()
   @IsOptional()
   username?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  bio?: string;
 }

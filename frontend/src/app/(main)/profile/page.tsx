@@ -21,7 +21,7 @@ export default function ProfilePage() {
 		const fetchProfile = async () => {
 			setLoading(true);
 			try {
-				const res = await api.get("/user/profile", {}, cookieStore.get("access_token"));
+				const res = await api.get("/user/me", {}, cookieStore.get("access_token"));
 				if (res.success) {
 					setProfile({
 						username: res.data.username,
@@ -48,7 +48,7 @@ export default function ProfilePage() {
 		setSuccess(false);
 
 		try {
-			const res = await api.put("/user/profile", { bio: profile.bio }, cookieStore.get("access_token"));
+			const res = await api.patch("/user/me", { bio: profile.bio }, cookieStore.get("access_token"));
 
 			if (res.success) {
 				setSuccess(true);

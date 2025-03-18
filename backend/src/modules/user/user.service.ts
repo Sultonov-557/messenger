@@ -23,9 +23,11 @@ export class UserService {
     const busyUsername = await this.userRepo.findOneBy({ username: dto.username });
     if (busyUsername) HttpError({ code: 'BUSY_USERNAME' });
 
+    const hashedPassword = await hash(dto.password, 10);
+
     const user = this.userRepo.create({
       username: dto.username,
-      password: encrypt(dto.password),
+      password: hashedPassword,
     });
     return await this.userRepo.save(user);
   }
@@ -60,12 +62,12 @@ export class UserService {
     const user = await this.userRepo.findOneBy({ username: dto.username });
     if (!user) return HttpError({ code: 'USER_NOT_FOUND' });
 
-    const passwordMatch = dto.password === decrypt(user.password);
+    const passwordMatch = await compare(dto.password, user.password);
     if (!passwordMatch) HttpError({ code: 'WRONG_PASSWORD' });
 
     const [access_token, refresh_token] = [
-      sign({ id: user.id, role: Role.User }, env.ACCESS_TOKEN_SECRET, { expiresIn: '2h' }),
-      sign({ id: user.id, role: Role.User }, env.REFRESH_TOKEN_SECRET, { expiresIn: '1d' }),
+      sign({ id: user.id, role: Role.User }, env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' }),
+      sign({ id: user.id, role: Role.User }, env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' }),
     ];
 
     await this.userRepo.update(

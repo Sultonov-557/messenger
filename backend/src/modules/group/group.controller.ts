@@ -27,8 +27,8 @@ export class GroupController {
 
   @Post()
   @DecoratorWrapper('create group', true, [Role.User])
-  async create(@Body() dto: CreateGroupDto) {
-    return CoreApiResponse.success(await this.groupService.create(dto));
+  async create(@Body() dto: CreateGroupDto, @Req() req: Request) {
+    return CoreApiResponse.success(await this.groupService.create(dto, req.user.id));
   }
 
   @Get()
