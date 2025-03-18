@@ -7,13 +7,7 @@ import { GroupModule } from './modules/group/group.module';
 import { UpdateModule } from './modules/update/update.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(mainDbConfig),
-    UserModule,
-    GroupModule,
-    MessageModule,
-    UpdateModule,
-  ],
+  imports: [TypeOrmModule.forRoot(mainDbConfig), UserModule, GroupModule, MessageModule, UpdateModule],
   controllers: [],
   providers: [],
 })

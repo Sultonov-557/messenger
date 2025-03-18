@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/entities/user.entity';
-import { In, Like, Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { Group } from './entities/group.entity';
 import { HttpError } from 'src/common/exception/http.error';
 import { CreateGroupDto } from './dto/create-group.dto';

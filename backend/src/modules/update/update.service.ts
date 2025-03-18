@@ -38,7 +38,7 @@ export class UpdateService implements OnGatewayConnection {
 
     const updates = await this.getUpdates(user.id);
 
-    for (let update of updates) {
+    for (const update of updates) {
       client.emit(update.name, update.data);
       await this.deleteUpdate(update.id);
     }

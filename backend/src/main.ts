@@ -5,11 +5,7 @@ import { NextFunction, Request, Response } from 'express';
 import { SwaggerModule } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { ApiSwaggerOptions } from './common/swagger/config.swagger';
-import {
-  AllExceptionsFilter,
-  BadRequestExceptionFilter,
-  HttpExceptionFilter,
-} from './common/filter/httpException.filter';
+import { BadRequestExceptionFilter, HttpExceptionFilter } from './common/filter/httpException.filter';
 import { env } from './common/config';
 
 async function bootstrap() {

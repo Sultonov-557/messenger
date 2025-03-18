@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { In, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { HttpError } from 'src/common/exception/http.error';

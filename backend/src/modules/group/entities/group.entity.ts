@@ -1,6 +1,6 @@
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Message } from 'src/modules/message/entities/message.entity';
-import { Column, Entity, JoinTable, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { GroupUser } from './group-user.entity';
 
 @Entity()

@@ -1,7 +1,6 @@
-import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { AbstractEntity } from 'src/common/database/abstract.entity';
 import { Role } from 'src/common/auth/roles/role.enum';
-import { Group } from 'src/modules/group/entities/group.entity';
 import { GroupUser } from 'src/modules/group/entities/group-user.entity';
 
 @Entity()
